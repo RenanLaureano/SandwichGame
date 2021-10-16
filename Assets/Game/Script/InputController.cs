@@ -4,9 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class InputController : MonoBehaviour
 {
-
     public enum MoveDirection {
         UP,
         DOWN,
@@ -16,13 +15,12 @@ public class GameController : MonoBehaviour
 
     private const float MIN_ARC_MOVE = 20.0f;
 
-    private GameObject selectedObject;
+    private TileNodeObject selectedObject;
 
     private void OnEnable()
     {
         LeanTouch.OnFingerSwipe += OnFingerSwipe;
         LeanSelectable.OnAnySelected += OnSelectAny;
-        LeanSelectable.OnAnyDeselected += OnDeselected;
     }
 
     private void OnDisable()
@@ -34,12 +32,7 @@ public class GameController : MonoBehaviour
     private void OnSelectAny(LeanSelect leanSelect, LeanSelectable leanSelectable)
     {
         Debug.Log("Selectable: " + leanSelectable.gameObject.name);
-        selectedObject = leanSelectable.gameObject;
-    }
-
-    private void OnDeselected(LeanSelect leanSelect, LeanSelectable leanSelectable)
-    {
-        Debug.Log("Deselected: " + leanSelectable.gameObject.name);
+        selectedObject = leanSelectable.gameObject.GetComponent<TileNodeObject>();
     }
 
     private void OnFingerSwipe(LeanFinger finger)
