@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
+    //Temporary after remove
+    public LevelCollection testCollection;
+    private GridData levelsGrid;
+
     private const float START_POS_X = -2.0f;
     private const float START_POS_Y = 0f;
     private const float START_POS_Z = -8f;
@@ -13,7 +17,7 @@ public class GridController : MonoBehaviour
 
     private int rows;
     private int columns;
-    private GameObject[,] grid;
+    private TileNodeObject[,] grid;
 
     //Tiles
     private GameObject bread;
@@ -32,10 +36,17 @@ public class GridController : MonoBehaviour
         ServiceLocator.Instance.Register<GridController>(this);
 
         LoadObjectTiles();
-        GenerateGrid(4, 4);
+        InitGridInfo();
+        GenerateGrid();
     }
 
-    void LoadObjectTiles()
+    private void InitGridInfo()
+    {
+        this.rows = testCollection.rows;
+        this.columns = testCollection.columns;
+        levelsGrid = testCollection.levelsGrid[0];
+    }
+    private void LoadObjectTiles()
     {
         bread = Resources.Load<GameObject>("Tiles/Bread");
         bacon = Resources.Load<GameObject>("Tiles/Bacon");
@@ -49,20 +60,20 @@ public class GridController : MonoBehaviour
         empty = Resources.Load<GameObject>("Tiles/Empty");
     }
 
-    private void GenerateGrid(int rows, int columns)
+    private void GenerateGrid()
     {
-        this.rows = rows;
-        this.columns = columns;
+        if(levelsGrid == null)
+        {
+            return;
+        }
 
-        grid = new GameObject[rows, columns];
+        grid = new TileNodeObject[rows, columns];
 
         for (int i = 0; i < columns; i++)
         {
             for (int j = 0; j < rows; j++)
             {
-                int randType = Random.Range(0, 10);
-                TileInfo tileInfo = new TileInfo { column = i, row = j, tileType = (TileInfo.TileType)randType };
-
+                TileInfo tileInfo = GetTileInfo(j, i);
                 CreateTile(tileInfo, j, i);
             }
         }
@@ -78,6 +89,20 @@ public class GridController : MonoBehaviour
         TileNodeObject tileNode = tempTile.AddComponent<TileNodeObject>();
         tileNode.isAvailable = tileInfo.tileType != TileInfo.TileType.EMPTY;
         tileNode.tileInfo = tileInfo;
+
+        grid[j, i] = tileNode;
+    }
+
+    private TileInfo GetTileInfo(int row, int column)
+    {
+        foreach (var tile in levelsGrid.tiles)
+        {
+            if (tile.row == row && tile.column == column)
+            {
+                return tile;
+            }
+        }
+        return null;
     }
 
     private GameObject GetTitleObjectByType(TileInfo.TileType type)
