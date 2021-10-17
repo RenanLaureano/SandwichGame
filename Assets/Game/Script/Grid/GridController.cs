@@ -44,7 +44,7 @@ public class GridController : MonoBehaviour
     {
         this.rows = testCollection.rows;
         this.columns = testCollection.columns;
-        levelsGrid = testCollection.levelsGrid[0];
+        levelsGrid = new GridData(testCollection.levelsGrid[0]);
     }
     private void LoadObjectTiles()
     {
@@ -88,7 +88,7 @@ public class GridController : MonoBehaviour
         //Setup tile node
         TileNodeObject tileNode = tempTile.AddComponent<TileNodeObject>();
         tileNode.isAvailable = tileInfo.tileType != TileInfo.TileType.EMPTY;
-        tileNode.tileInfo = tileInfo;
+        tileNode.SetTileInfo(tileInfo);
 
         grid[j, i] = tileNode;
     }
@@ -132,5 +132,25 @@ public class GridController : MonoBehaviour
         }
 
         return null;
+    }
+
+    public TileNodeObject[,] GetGrid()
+    {
+        return grid;
+    }
+
+    public bool GridExist(int row, int column)
+    {
+        if(row < 0 || column < 0)
+        {
+            return false;
+        }
+
+        if(row > rows || column > columns)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

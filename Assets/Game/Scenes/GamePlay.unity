@@ -233,6 +233,7 @@ GameObject:
   - component: {fileID: 835798322}
   - component: {fileID: 835798323}
   - component: {fileID: 835798321}
+  - component: {fileID: 835798324}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -277,6 +278,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f10ce87bad65bfa47a4ba64dd7d5e715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &835798324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 835798320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32faa64e70faeaa42b84f846bd22f694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &852700070
@@ -434,8 +447,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deselectWithNothing: 0
-  limit: 0
-  maxSelectables: 5
+  limit: 2
+  maxSelectables: 0
   reselect: 0
   selectables: []
   onSelected:

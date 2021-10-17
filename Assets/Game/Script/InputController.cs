@@ -1,26 +1,26 @@
 using Lean.Common;
 using Lean.Touch;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+using static MoveController;
 
 public class InputController : MonoBehaviour
 {
-    public enum MoveDirection {
-        UP,
-        DOWN,
-        RIGHT,
-        LEFT
-    }
-
     private const float MIN_ARC_MOVE = 20.0f;
 
     private TileNodeObject selectedObject;
+    private MoveController moveController;
+
+    void Start()
+    {
+        ServiceLocator.Instance.Register<InputController>(this);
+    }
 
     private void OnEnable()
     {
         LeanTouch.OnFingerSwipe += OnFingerSwipe;
         LeanSelectable.OnAnySelected += OnSelectAny;
+        LeanSelectable.OnAnyDeselected += OnDeselectedAny;
     }
 
     private void OnDisable()
@@ -35,6 +35,12 @@ public class InputController : MonoBehaviour
         selectedObject = leanSelectable.gameObject.GetComponent<TileNodeObject>();
     }
 
+    private void OnDeselectedAny(LeanSelect leanSelect, LeanSelectable leanSelectable)
+    {
+        Debug.Log("Deselected: " + leanSelectable.gameObject.name);
+        selectedObject = null;
+    }
+
     private void OnFingerSwipe(LeanFinger finger)
     {
         if(selectedObject == null)
@@ -42,10 +48,22 @@ public class InputController : MonoBehaviour
             return;
         }
 
+        if(moveController == null)
+        {
+            moveController = ServiceLocator.Instance.GetComponentRegistered<MoveController>();
+        }
+
         Vector2 fingerSwipe = finger.ScreenPosition - finger.StartScreenPosition;
         MoveDirection moveDirection = GetSideSwiper(fingerSwipe);
 
         Debug.Log("Move direction: " + moveDirection.ToString());
+
+        if(moveDirection == MoveDirection.NONE)
+        {
+            return;
+        }
+
+        moveController.MoveToDirection(selectedObject, moveDirection);
     }
 
     private MoveDirection GetSideSwiper(Vector2 fingerSwipe)
@@ -67,9 +85,7 @@ public class InputController : MonoBehaviour
             return MoveDirection.LEFT;
         }
 
-        Debug.LogError("Error on get move direction");
-
-        return MoveDirection.UP;
+        return MoveDirection.NONE;
     }
 
     protected bool IsInAngle(float testAngle, Vector2 fingerSwipe)
