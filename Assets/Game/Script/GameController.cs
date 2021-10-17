@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObjectEvent onMoveIngredient;
     [SerializeField] private VoidEvent onCancelCommand;
 
-    private int level = 0;
+    private int level = 1;
     private int moves = 0;
     private GameState gameState;
 
@@ -49,8 +49,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        LevelData _level = levelCollection.levels[level];
-        gridController.CreateGrid(_level.rows, _level.columns, _level.gridData);
+        gridController.CreateGrid(levelCollection.levels[level]);
 
         gameStateVariable.SetValue((int)GameState.PLAYING);
 
@@ -125,6 +124,8 @@ public class GameController : MonoBehaviour
             yield return new WaitWhile(() => gameState == GameState.ANIMING);
             undoCommands.Pop().Undo();
         }
+
+        moves = 0;
 
         yield return null;
     }

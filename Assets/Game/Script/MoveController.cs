@@ -88,6 +88,7 @@ void Start()
                 selectedObject.transform.SetParent(target.transform);
                 selectedObject.UpdatePositionTileInfo(target.TileInfo.row, target.TileInfo.column);
                 InMoving = false;
+                movedIgredient.Reset();
                 movedIgredient.SetValue(selectedObject.GetParentAll().gameObject);
             });
 
