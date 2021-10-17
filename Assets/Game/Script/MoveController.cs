@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityAtoms.BaseAtoms;
 using UnityEngine;
 
 public class MoveController : MonoBehaviour
@@ -15,20 +16,30 @@ public class MoveController : MonoBehaviour
 
     private const float TILE_HEIGHT = 0.1f;
 
+    [Header("Events")]
+    [SerializeField] private VoidEvent onCancelCommand;
+
+    [Header("Varibles")]
+    [SerializeField] private IntVariable gameStateVariable;
+    [SerializeField] private GameObjectVariable movedIgredient;
+
     private GridController gridController = null;
-    private GameController gameController = null;
+
     private bool inMoving = false;
 
     private int animMoveID;
     private int animRotateID;
 
-    public bool InMoving { get => inMoving; }
+    private bool InMoving { set {
+            gameStateVariable.SetValue(value ? (int)GameController.GameState.ANIMING : (int)GameController.GameState.PLAYING);
+            inMoving = value;
+        } }
 
-    void Start()
+
+
+void Start()
     {
         gridController = GetComponent<GridController>();
-        gameController = GetComponent<GameController>();
-
         ServiceLocator.Instance.Register<MoveController>(this);
     }
 
@@ -46,7 +57,7 @@ public class MoveController : MonoBehaviour
 
         if (target == null)
         {
-            gameController.CancelLastCommand();
+            onCancelCommand.Raise();
             return null;
         }
 
@@ -63,7 +74,7 @@ public class MoveController : MonoBehaviour
         Vector3 rotationAngle = GetRotationAngle(direction);
         Vector3 targetRotation = selectedObject.transform.rotation.eulerAngles + new Vector3(rotationAngle.x, 0, rotationAngle.z);
 
-        inMoving = true;
+        InMoving = true;
 
         target.AddChild(selectedObject);
         selectedObject.SetParent(target);
@@ -76,8 +87,8 @@ public class MoveController : MonoBehaviour
             {
                 selectedObject.transform.SetParent(target.transform);
                 selectedObject.UpdatePositionTileInfo(target.TileInfo.row, target.TileInfo.column);
-                inMoving = false;
-                gameController.Moved(selectedObject.GetParentAll());
+                InMoving = false;
+                movedIgredient.SetValue(selectedObject.GetParentAll().gameObject);
             });
 
         animMoveID = animMove.uniqueId;
@@ -97,7 +108,7 @@ public class MoveController : MonoBehaviour
 
         TileInfo tileInfo = selectedObject.TileInfo;
 
-        inMoving = true;
+        InMoving = true;
 
         selectedObject.GetParentAll().RemoveChild(selectedObject);
 
@@ -140,7 +151,7 @@ public class MoveController : MonoBehaviour
                 selectedObject.UpdatePositionTileInfo(row, column);
                 grid[row, column] = selectedObject;
 
-                inMoving = false;
+                InMoving = false;
             });
 
             animMoveID = animMove.uniqueId;

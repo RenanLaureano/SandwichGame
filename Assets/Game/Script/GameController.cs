@@ -2,13 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityAtoms;
+using UnityAtoms.BaseAtoms;
 
 public class GameController : MonoBehaviour
 {
+    public enum GameState
+    {
+        GENERATING_GRID,
+        PLAYING,
+        ANIMING,
+        GAMEOVER,
+    }
+
     [SerializeField] private Button resetButton;
     [SerializeField] private Button undoButton;
+
+    [Header("Varibles")]
+    [SerializeField] private IntVariable gameStateVariable;
+
+    [Header("Events")]
+    [SerializeField] private IntEvent onChangeGameState;
+    [SerializeField] private GameObjectEvent onMoveIngredient;
+    [SerializeField] private VoidEvent onCancelCommand;
+
     private int level = 0;
     private int moves = 0;
+    private GameState gameState;
 
     private LevelCollection[] levelCollections;
     private GridController gridController;
@@ -31,6 +51,13 @@ public class GameController : MonoBehaviour
 
         LevelCollection _level = levelCollections[level];
         gridController.CreateGrid(_level.rows, _level.columns, _level.gridData);
+
+        gameStateVariable.SetValue((int)GameState.PLAYING);
+
+        //Register events
+        onChangeGameState.Register(OnChangeState);
+        onMoveIngredient.Register(Moved);
+        onCancelCommand.Register(CancelLastCommand);
     }
 
     public void ExecuteNewCommand(Command command)
@@ -40,61 +67,62 @@ public class GameController : MonoBehaviour
         command.Execute();
     }
 
-    public void Moved(TileNodeObject tileNode)
+    public void Moved(GameObject movedObject)
     {
+        TileNodeObject tileNode = movedObject.GetComponent<TileNodeObject>();
+
         if (moves == (levelCollections[0].amountBreads + levelCollections[0].amountIngredients) - 1)
         {
-            if (CheckWin(tileNode))
-            {
-                Debug.Log("WIN");
-            }
-            else
-            {
-                Debug.Log("LOSE");
-            }
+            GaveOver(tileNode);
         }
     }
 
-    private bool CheckWin(TileNodeObject tileNode)
+    private void OnChangeState(int state)
     {
+        Debug.Log("state: " + state);
+        gameState = (GameState)state;
+    }
+    private void GaveOver(TileNodeObject tileNode)
+    {
+        bool won = true;
+
         if (tileNode.TileInfo.tileType != TileInfo.TileType.BREAD)
         {
-            return false;
+            won = false;
         }
 
         TileNodeObject lastChild = tileNode.GetLastChild();
 
         if (lastChild == null || lastChild.TileInfo.tileType != TileInfo.TileType.BREAD)
         {
-            return false;
+            won = false;
         }
 
-        return true;
+        Debug.Log("Win: " + won.ToString());
     }
 
     public void CancelLastCommand()
     {
+        moves--;
         undoCommands.Pop();
     }
 
     private void OnClickResetButton()
     {
-        MoveController moveController = ServiceLocator.Instance.GetComponentRegistered<MoveController>();
-
-        if (undoCommands == null || undoCommands.Count <= 0 || moveController.InMoving)
+        if (undoCommands == null || undoCommands.Count <= 0 || gameState == GameState.ANIMING)
         {
             return;
         }
 
-        StartCoroutine(RestartGame(moveController));
+        StartCoroutine(RestartGame());
     }
 
-    private IEnumerator RestartGame(MoveController moveController)
+    private IEnumerator RestartGame()
     {
 
         while (undoCommands.Count > 0)
         {
-            yield return new WaitWhile(() => moveController.InMoving);
+            yield return new WaitWhile(() => gameState == GameState.ANIMING);
             undoCommands.Pop().Undo();
         }
 
@@ -103,9 +131,7 @@ public class GameController : MonoBehaviour
 
     private void OnClickUndoButton()
     {
-        MoveController moveController = ServiceLocator.Instance.GetComponentRegistered<MoveController>();
-
-        if (undoCommands == null || undoCommands.Count <= 0 || moveController.InMoving)
+        if (undoCommands == null || undoCommands.Count <= 0 || gameState == GameState.ANIMING)
         {
             return;
         }

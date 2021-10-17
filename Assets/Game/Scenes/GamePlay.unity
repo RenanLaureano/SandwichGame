@@ -690,6 +690,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32faa64e70faeaa42b84f846bd22f694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onCancelCommand: {fileID: 11400000, guid: 98030dfb0d273e54dae5937da94b7a81, type: 2}
+  gameStateVariable: {fileID: 11400000, guid: a9c13a044c1361e4883ee517fad5d863, type: 2}
+  movedIgredient: {fileID: 11400000, guid: 15729ed3e829db747b56e8c9ebc1ba5f, type: 2}
 --- !u!114 &835798325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -704,6 +707,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resetButton: {fileID: 1507876635}
   undoButton: {fileID: 76095140}
+  gameStateVariable: {fileID: 11400000, guid: a9c13a044c1361e4883ee517fad5d863, type: 2}
+  onChangeGameState: {fileID: 11400000, guid: 5c560ba3a927f4c41a16a105ffdeee68, type: 2}
+  onMoveIngredient: {fileID: 11400000, guid: 879ffef5ea46ea6409c811b7a9928f03, type: 2}
+  onCancelCommand: {fileID: 11400000, guid: 98030dfb0d273e54dae5937da94b7a81, type: 2}
 --- !u!1 &852700070
 GameObject:
   m_ObjectHideFlags: 0
@@ -1546,7 +1553,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005998812}
   m_LocalRotation: {x: 0.3987491, y: 0, z: 0, w: 0.91706014}
-  m_LocalPosition: {x: -0.2, y: 7.1, z: -13.3}
+  m_LocalPosition: {x: -0.2, y: 7.58, z: -13.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
