@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour
             level = 0;
         }
 
-        textLevel.text = string.Format("Level {0}", level);
+        textLevel.text = string.Format("Level {0}", level + 1);
 
         gridController.CreateGrid(levelCollection.levels[level]);
 
@@ -137,13 +137,22 @@ public class GameController : MonoBehaviour
         if (won)
         {
             level++;
+
+            if (level >= levelCollection.levels.Count)
+            {
+                level = 0;
+            }
+
             PlayerPrefs.SetInt("Level", level);
+
             moves = 0;
-            textLevel.text = string.Format("Level {0}", level);
+            undoCommands.Clear();
+
+            textLevel.text = string.Format("Level {0}", level + 1);
+
             gridController.DeleteGrid();
             gridController.CreateGrid(levelCollection.levels[level]);
         }
-        Debug.Log("Win: " + won.ToString());
     }
 
     public void CancelLastCommand()
