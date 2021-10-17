@@ -11,3 +11,12 @@ public class LevelData: ScriptableObject
     public int amountIngredients;
     public List<TileInfo> gridData;
 }
+
+public class LevelDataJson
+{
+    public int rows;
+    public int columns;
+    public int amountBreads;
+    public int amountIngredients;
+    public List<TileInfo> gridData;
+}

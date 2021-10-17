@@ -29,8 +29,8 @@ public class PauseScreen : MonoBehaviour
     {
         buttonPause.onClick.AddListener(OnClickPause);
         buttonPlay.onClick.AddListener(OnClickPause);
-        buttonOpenSavedGrids.onClick.AddListener(OnClickOpenSavedGrids);
         buttonBackScreen.onClick.AddListener(BackMainScreen);
+        buttonOpenSavedGrids.onClick.AddListener(OnClickOpenSavedGrids);
     }
 
     private void OnClickOpenSavedGrids()
@@ -44,14 +44,31 @@ public class PauseScreen : MonoBehaviour
         }
 
 #if UNITY_EDITOR
-        string path = "Collections/Levels/Saved/";
+        LevelData[] savedGrids = Resources.LoadAll<LevelData>("Collections/Levels/Saved/");
 #else
-        string path = Application.persistentDataPath + "Collections/Levels/Saved/";
+        List<LevelData> levelDatas = new List<LevelData>();
+        string path = System.IO.Path.Combine(Application.persistentDataPath);
+        int num = 0;
+        foreach (var file in System.IO.Directory.EnumerateFiles(path, "*.json"))
+        {
+            string loadedJsonDataString = System.IO.File.ReadAllText(file);
+            LevelDataJson data = JsonUtility.FromJson<LevelDataJson> (loadedJsonDataString);
+
+            LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
+            levelData.name = "Level-" + num.ToString();
+            levelData.rows = data.rows;
+            levelData.columns = data.columns;
+            levelData.amountBreads = data.amountBreads;
+            levelData.amountIngredients = data.amountIngredients;
+            levelData.gridData = data.gridData;
+
+            levelDatas.Add(levelData);
+            num++;
+        }
+        LevelData[] savedGrids = levelDatas.ToArray();
 #endif
 
-        LevelData[] savedGrids = Resources.LoadAll<LevelData>("Collections/Levels/Saved/");
-
-        foreach(LevelData levelData in savedGrids)
+        foreach (LevelData levelData in savedGrids)
         {
             Instantiate(prefabButtonSavedGrids, contentButtons).Init(levelData, OnPlaySavedLevel);
         }
@@ -77,7 +94,7 @@ public class PauseScreen : MonoBehaviour
         if (!isPaused)
         {
             idAnimation = LeanTween.alphaCanvas(groupCanvas, 0, timeAnimation)
-                .setOnComplete(()=> content.SetActive(false))
+                .setOnComplete(() => content.SetActive(false))
                 .uniqueId;
         }
         else

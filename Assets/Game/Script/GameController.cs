@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using UnityAtoms.BaseAtoms;
 using UnityEditor;
 using TMPro;
-using System;
 
 public class GameController : MonoBehaviour
 {
@@ -53,8 +52,9 @@ public class GameController : MonoBehaviour
 
         resetButton.onClick.AddListener(OnClickResetButton);
         undoButton.onClick.AddListener(OnClickUndoButton);
-        saveGridButton.onClick.AddListener(OnClickSaveGridButton);
         newGridButton.onClick.AddListener(OnClickNewGridButton);
+
+        saveGridButton.onClick.AddListener(OnClickSaveGridButton);
 
         if (levelCollection == null)
         {
@@ -220,13 +220,14 @@ public class GameController : MonoBehaviour
 
         string fileName = "Level-" + System.DateTime.Now.Ticks.ToString();
 
-        // Save the container asset with the specified name
 #if UNITY_EDITOR
+        // Save the container asset with the specified name
         string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Resources/Collections/Levels/Saved/" + fileName + ".asset");
         AssetDatabase.CreateAsset(levelData, path);
 #else
-        string path = AssetDatabase.GenerateUniqueAssetPath(Application.persistentDataPath + "/Collections/Levels/Saved/"+ fileName+".asset");
-        AssetDatabase.CreateAsset(levelCollection, path);
+        string json = JsonUtility.ToJson(levelData);
+        string path = System.IO.Path.Combine(Application.persistentDataPath, fileName + ".json");
+        System.IO.File.WriteAllText(path, json);
 #endif
     }
 }
