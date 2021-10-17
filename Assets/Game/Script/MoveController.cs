@@ -22,17 +22,21 @@ public class MoveController : MonoBehaviour
     private int animMoveID;
     private int animRotateID;
 
+    public bool InMoving { get => inMoving; }
+
     void Start()
     {
         gridController = GetComponent<GridController>();
         gameController = GetComponent<GameController>();
+
+        ServiceLocator.Instance.Register<MoveController>(this);
     }
 
-    public void MoveToDirection(TileNodeObject selectedObject, MoveDirection direction)
+    public LTDescr MoveToDirection(TileNodeObject selectedObject, MoveDirection direction)
     {
         if (inMoving)
         {
-            return;
+            return null;
         }
 
         selectedObject = selectedObject.GetParentAll();
@@ -40,9 +44,10 @@ public class MoveController : MonoBehaviour
         TileNodeObject[,] grid = gridController.GetGrid();
         TileNodeObject target = GetTargetByDirection(grid, selectedObject.TileInfo, direction);
 
-        if(target == null)
+        if (target == null)
         {
-            return;
+            gameController.CancelLastCommand();
+            return null;
         }
 
         TileInfo tileInfo = selectedObject.TileInfo;
@@ -65,7 +70,7 @@ public class MoveController : MonoBehaviour
 
         animRotateID = selectedObject.transform.LeanRotate(targetRotation, 0.3f).uniqueId;
 
-        animMoveID = selectedObject.transform
+        LTDescr animMove = selectedObject.transform
             .LeanMove(targetPosition, 0.3f)
             .setOnComplete(() =>
             {
@@ -73,10 +78,75 @@ public class MoveController : MonoBehaviour
                 selectedObject.UpdatePositionTileInfo(target.TileInfo.row, target.TileInfo.column);
                 inMoving = false;
                 gameController.Moved(selectedObject.GetParentAll());
-            }).uniqueId;
+            });
 
+        animMoveID = animMove.uniqueId;
 
+        return animMove;
+    }
 
+    public LTDescr UndoDirection(TileNodeObject selectedObject, MoveDirection direction, Vector3 targetPosition, Vector3 targetRotation)
+    {
+        if (inMoving)
+        {
+            return null;
+        }
+
+        TileNodeObject[,] grid = gridController.GetGrid();
+        TileNodeObject target = GetTargetByDirection(grid, selectedObject.TileInfo, direction);
+
+        TileInfo tileInfo = selectedObject.TileInfo;
+
+        inMoving = true;
+
+        selectedObject.GetParentAll().RemoveChild(selectedObject);
+
+        if (target != null)
+        {
+            target.AddChild(selectedObject);
+            selectedObject.SetParent(target);
+        }
+        else
+        {
+            selectedObject.RemoveParent();
+        }
+
+        animRotateID = selectedObject.transform.LeanRotate(targetRotation, 0.3f).uniqueId;
+
+        LTDescr animMove = selectedObject.transform
+            .LeanMove(targetPosition, 0.3f)
+            .setOnComplete(() =>
+            {
+                if (target != null)
+                {
+                    selectedObject.transform.SetParent(target.transform);
+                }
+                else
+                {
+                    selectedObject.transform.SetParent(null);
+                }
+
+                int row = selectedObject.TileInfo.row;
+                int column = selectedObject.TileInfo.column;
+
+                if(direction == MoveDirection.DOWN || direction == MoveDirection.UP)
+                {
+                    row += direction == MoveDirection.UP ? 1 : -1;
+                }
+                else if (direction == MoveDirection.RIGHT || direction == MoveDirection.LEFT)
+                {
+                    column += direction == MoveDirection.RIGHT ? 1 : -1;
+                }
+
+                selectedObject.UpdatePositionTileInfo(row, column);
+                grid[row, column] = selectedObject;
+
+                inMoving = false;
+            });
+
+            animMoveID = animMove.uniqueId;
+
+        return animMove;
     }
 
     private TileNodeObject GetTargetByDirection(TileNodeObject[,] grid, TileInfo selectedTile, MoveDirection direction)
@@ -87,7 +157,7 @@ public class MoveController : MonoBehaviour
         {
             int row = selectedTile.row + (direction == MoveDirection.UP ? 1 : -1);
 
-            if(gridController.GridExist(row, selectedTile.column))
+            if (gridController.GridExist(row, selectedTile.column))
             {
                 target = grid[row, selectedTile.column];
             }

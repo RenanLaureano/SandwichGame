@@ -168,4 +168,12 @@ public class GridController : MonoBehaviour
 
         return true;
     }
+
+    public void DeleteGrid()
+    {
+        foreach(TileNodeObject tile in grid)
+        {
+            Destroy(tile.gameObject);
+        }
+    }
 }

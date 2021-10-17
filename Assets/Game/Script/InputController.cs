@@ -9,11 +9,11 @@ public class InputController : MonoBehaviour
     private const float MIN_ARC_MOVE = 20.0f;
 
     private TileNodeObject selectedObject;
-    private MoveController moveController;
+    private GameController gameController;
 
     void Start()
     {
-        moveController = GetComponent<MoveController>();
+        gameController = GetComponent<GameController>();
     }
 
     private void OnEnable()
@@ -49,38 +49,36 @@ public class InputController : MonoBehaviour
         }
 
         Vector2 fingerSwipe = finger.ScreenPosition - finger.StartScreenPosition;
-        MoveDirection moveDirection = GetSideSwiper(fingerSwipe);
+        Command commandDiretion = GetCommandSwiper(fingerSwipe);
 
-        Debug.Log("Move direction: " + moveDirection.ToString());
-
-        if(moveDirection == MoveDirection.NONE)
+        if(commandDiretion == null)
         {
             return;
         }
 
-        moveController.MoveToDirection(selectedObject, moveDirection);
+        gameController.ExecuteNewCommand(commandDiretion);
     }
 
-    private MoveDirection GetSideSwiper(Vector2 fingerSwipe)
+    private Command GetCommandSwiper(Vector2 fingerSwipe)
     {
         if (IsInAngle(0.0f, fingerSwipe) || IsInAngle(45.0f, fingerSwipe))
         {
-            return MoveDirection.UP;
+            return new MoveUpCommand(selectedObject.GetParentAll());
         }
         else if (IsInAngle(180.0f, fingerSwipe) || IsInAngle(225.0f, fingerSwipe))
         {
-            return MoveDirection.DOWN;
+            return new MoveDownCommand(selectedObject.GetParentAll());
         }
         else if (IsInAngle(90.0f, fingerSwipe) || IsInAngle(135.0f, fingerSwipe))
         {
-            return MoveDirection.RIGHT;
+            return new MoveRightCommand(selectedObject.GetParentAll()); ;
         }
         else if (IsInAngle(270.0f, fingerSwipe) || IsInAngle(315.0f, fingerSwipe))
         {
-            return MoveDirection.LEFT;
+            return new MoveLeftCommand(selectedObject.GetParentAll());
         }
 
-        return MoveDirection.NONE;
+        return null;
     }
 
     protected bool IsInAngle(float testAngle, Vector2 fingerSwipe)

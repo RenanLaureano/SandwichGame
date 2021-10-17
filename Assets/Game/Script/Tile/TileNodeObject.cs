@@ -28,9 +28,18 @@ public class TileNodeObject : MonoBehaviour
         this.parent = parent;
     }
 
+    public void RemoveParent()
+    {
+        this.parent = null;
+    }
+
     public void AddChild(TileNodeObject child)
     {
         children.Add(child);
+    }
+    public void RemoveChild(TileNodeObject child)
+    {
+        children.Remove(child);
     }
 
     public TileNodeObject GetLastChild()
