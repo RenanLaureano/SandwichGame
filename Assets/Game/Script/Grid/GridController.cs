@@ -246,15 +246,22 @@ public class GridController : MonoBehaviour
 
     public void DeleteGrid()
     {
-        foreach (TileNodeObject tile in grid)
+        for (int i = 0; i < columns; i++)
         {
-            Destroy(tile.gameObject);
+            for (int j = 0; j < rows; j++)
+            {
+                if (grid[j, i] != null)
+                {
+                    Destroy(grid[j, i].gameObject);
+                }
+            }
         }
     }
 
     public LevelData GetLevelData()
     {
-        return new LevelData { 
+        return new LevelData
+        {
             rows = rows,
             columns = columns,
             amountBreads = amountBreads,

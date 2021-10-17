@@ -1215,6 +1215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d081ff8785e267f42b15f5d78e3a4032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textLevel: {fileID: 1804817435}
   resetButton: {fileID: 1507876635}
   undoButton: {fileID: 76095140}
   saveGridButton: {fileID: 767056670}

@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityAtoms;
 using UnityAtoms.BaseAtoms;
-using System;
 using UnityEditor;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -17,6 +16,8 @@ public class GameController : MonoBehaviour
         GAMEOVER,
     }
 
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI textLevel;
     [SerializeField] private Button resetButton;
     [SerializeField] private Button undoButton;
     [SerializeField] private Button saveGridButton;
@@ -40,6 +41,8 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        level = PlayerPrefs.GetInt("Level", 0);
+
         gridController = GetComponent<GridController>();
 
         levelCollection = Resources.LoadAll<LevelCollection>("Collections")[0];
@@ -52,6 +55,13 @@ public class GameController : MonoBehaviour
         {
             return;
         }
+
+        if(level >= levelCollection.levels.Count)
+        {
+            level = 0;
+        }
+
+        textLevel.text = string.Format("Level {0}", level);
 
         gridController.CreateGrid(levelCollection.levels[level]);
 
@@ -124,6 +134,15 @@ public class GameController : MonoBehaviour
             won = false;
         }
 
+        if (won)
+        {
+            level++;
+            PlayerPrefs.SetInt("Level", level);
+            moves = 0;
+            textLevel.text = string.Format("Level {0}", level);
+            gridController.DeleteGrid();
+            gridController.CreateGrid(levelCollection.levels[level]);
+        }
         Debug.Log("Win: " + won.ToString());
     }
 
