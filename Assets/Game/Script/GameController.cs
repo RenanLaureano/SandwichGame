@@ -49,8 +49,7 @@ public class GameController : MonoBehaviour
             return false;
         }
 
-        TileNodeObject lastChild = tileNode.transform.GetChild(tileNode.transform.childCount - 1)
-            .gameObject.GetComponent<TileNodeObject>();
+        TileNodeObject lastChild = tileNode.GetLastChild();
 
         if (lastChild == null || lastChild.TileInfo.tileType != TileInfo.TileType.BREAD)
         {

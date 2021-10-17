@@ -33,6 +33,16 @@ public class TileNodeObject : MonoBehaviour
         children.Add(child);
     }
 
+    public TileNodeObject GetLastChild()
+    {
+        if (children.Count <= 0)
+        {
+            return null;
+        }
+
+        return children[children.Count - 1];
+    }
+
     public void SetTileInfo(TileInfo tileInfo)
     {
         this.tileInfo = tileInfo;
