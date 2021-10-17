@@ -13,28 +13,12 @@ MonoBehaviour:
   m_Name: LevelCollection1
   m_EditorClassIdentifier: 
   levels:
-  - rows: 4
-    columns: 4
-    amountBreads: 2
-    amountIngredients: 3
-    gridData:
-    - row: 0
-      column: 0
-      tileType: 1
-    - row: 0
-      column: 1
-      tileType: 9
-    - row: 0
-      column: 2
-      tileType: 7
-    - row: 1
-      column: 0
-      tileType: 1
-    - row: 1
-      column: 1
-      tileType: 3
-  - rows: 4
-    columns: 4
-    amountBreads: 2
-    amountIngredients: 3
-    gridData: []
+  - {fileID: 11400000, guid: 483b1957fce4f774881272d8ebe4f973, type: 2}
+  - {fileID: 11400000, guid: c8c40f16f1453c94d9112caa0d6aafd7, type: 2}
+  - {fileID: 11400000, guid: b35e98aa3ec356c4085a601ebd5d1fb7, type: 2}
+  - {fileID: 11400000, guid: 1348e96e1ceb754478ef6ff51f19f8f2, type: 2}
+  - {fileID: 11400000, guid: 3fdda25d513915c468690babcfdd1764, type: 2}
+  - {fileID: 11400000, guid: b72881c4579461d4c977df15f83ef387, type: 2}
+  - {fileID: 11400000, guid: 76af08d1f91abec44b5122ab0dd91c10, type: 2}
+  - {fileID: 11400000, guid: 6ccfca515f1f0444c92fb43db3a1da33, type: 2}
+  - {fileID: 11400000, guid: 207c84f29a24c994f93aaa7545451bbc, type: 2}

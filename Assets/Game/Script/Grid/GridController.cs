@@ -104,10 +104,13 @@ public class GridController : MonoBehaviour
                     int rIgredient = Random.Range(0, igredientAvaliable.Count);
                     type = (TileInfo.TileType)igredientAvaliable.List[rIgredient];
                     countIngredients++;
+                    nextBread = false;
                 }
                 else
                 {
-                    if(countBreads < 2)
+                    nextBread = false;
+
+                    if (countBreads < 2)
                     {
                         nextBread = true;
                     }
@@ -193,7 +196,7 @@ public class GridController : MonoBehaviour
         {
             if (tile.row == row && tile.column == column)
             {
-                return tile;
+                return new TileInfo { row = row, column = column, tileType = tile.tileType };
             }
         }
         return null;
@@ -247,5 +250,16 @@ public class GridController : MonoBehaviour
         {
             Destroy(tile.gameObject);
         }
+    }
+
+    public LevelData GetLevelData()
+    {
+        return new LevelData { 
+            rows = rows,
+            columns = columns,
+            amountBreads = amountBreads,
+            amountIngredients = amountIngredients,
+            gridData = levelsGrid
+        };
     }
 }

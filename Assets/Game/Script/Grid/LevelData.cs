@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
-public class LevelData
+[CreateAssetMenu(fileName = "LevelCollection", menuName = "SandwichGame/Level/Level", order = 1)]
+public class LevelData: ScriptableObject
 {
     public int rows;
     public int columns;
