@@ -110,7 +110,6 @@ public class MoveController : MonoBehaviour
         {
             selectedObject.RemoveParent();
         }
-
         animRotateID = selectedObject.transform.LeanRotate(targetRotation, 0.3f).uniqueId;
 
         LTDescr animMove = selectedObject.transform

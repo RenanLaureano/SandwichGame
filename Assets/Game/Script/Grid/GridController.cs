@@ -17,31 +17,22 @@ public class GridController : MonoBehaviour
     private TileNodeObject[,] grid;
 
     //Tiles
-    private GameObject bread;
-    private GameObject bacon;
-    private GameObject cheese;
-    private GameObject egg;
-    private GameObject ham;
-    private GameObject onion;
-    private GameObject salad;
-    private GameObject salami;
-    private GameObject tomato;
-    private GameObject empty;
+    private Dictionary<TileInfo.TileType, IgredientData> igredients;
 
     void Start()
     {
         LoadObjectTiles();
-        GenerateGrid();
     }
 
     public void CreateGrid(int rows, int columns, List<TileInfo> gridData)
     {
         this.rows = rows;
         this.columns = columns;
-        levelsGrid = GenerateGridDate(gridData);
+        levelsGrid = GenerateGridData(gridData);
+        GenerateGrid();
     }
 
-    private List<TileInfo> GenerateGridDate(List<TileInfo> gridData)
+    private List<TileInfo> GenerateGridData(List<TileInfo> gridData)
     {
         List<TileInfo> grid = new List<TileInfo>();
 
@@ -56,23 +47,20 @@ public class GridController : MonoBehaviour
                     tileType = tile.tileType
                 });
             }
-        }
 
+        }
+        
         return grid;
     }
 
     private void LoadObjectTiles()
     {
-        bread = Resources.Load<GameObject>("Tiles/Bread");
-        bacon = Resources.Load<GameObject>("Tiles/Bacon");
-        cheese = Resources.Load<GameObject>("Tiles/Cheese");
-        egg = Resources.Load<GameObject>("Tiles/Egg");
-        ham = Resources.Load<GameObject>("Tiles/Ham");
-        onion = Resources.Load<GameObject>("Tiles/Onion");
-        salad = Resources.Load<GameObject>("Tiles/Salad");
-        salami = Resources.Load<GameObject>("Tiles/Salami");
-        tomato = Resources.Load<GameObject>("Tiles/Tomato");
-        empty = Resources.Load<GameObject>("Tiles/Empty");
+        IgredientData[] tiles = Resources.LoadAll<IgredientData>("Tiles/");
+        igredients = new Dictionary<TileInfo.TileType, IgredientData>();
+        foreach (IgredientData tile in tiles)
+        {
+            igredients.Add(tile.tileType, tile);
+        }
     }
 
     private void GenerateGrid()
@@ -122,28 +110,9 @@ public class GridController : MonoBehaviour
 
     private GameObject GetTitleObjectByType(TileInfo.TileType type)
     {
-        switch (type)
+        if (igredients.ContainsKey(type))
         {
-            case TileInfo.TileType.EMPTY:
-                return empty;
-            case TileInfo.TileType.BREAD:
-                return bread;
-            case TileInfo.TileType.BACON:
-                return bacon;
-            case TileInfo.TileType.CHEESE:
-                return cheese;
-            case TileInfo.TileType.EGG:
-                return egg;
-            case TileInfo.TileType.HAM:
-                return ham;
-            case TileInfo.TileType.ONION:
-                return onion;
-            case TileInfo.TileType.SALAD:
-                return salad;
-            case TileInfo.TileType.SALAMI:
-                return salami;
-            case TileInfo.TileType.TOMATO:
-                return tomato;
+            return igredients[type].prefab;
         }
 
         return null;
