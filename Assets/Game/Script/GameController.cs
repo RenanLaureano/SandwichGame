@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityAtoms.BaseAtoms;
 using UnityEditor;
 using TMPro;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private Button resetButton;
     [SerializeField] private Button undoButton;
     [SerializeField] private Button saveGridButton;
+    [SerializeField] private Button newGridButton;
 
     [Header("Varibles")]
     [SerializeField] private IntVariable gameStateVariable;
@@ -50,6 +52,7 @@ public class GameController : MonoBehaviour
         resetButton.onClick.AddListener(OnClickResetButton);
         undoButton.onClick.AddListener(OnClickUndoButton);
         saveGridButton.onClick.AddListener(OnClickSaveGridButton);
+        newGridButton.onClick.AddListener(OnClickNewGridButton);
 
         if (levelCollection == null)
         {
@@ -71,29 +74,6 @@ public class GameController : MonoBehaviour
         onChangeGameState.Register(OnChangeState);
         onMoveIngredient.Register(Moved);
         onCancelCommand.Register(CancelLastCommand);
-    }
-
-    private void OnClickSaveGridButton()
-    {
-        LevelData data = gridController.GetLevelData();
-
-        LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
-        levelData.rows = data.rows;
-        levelData.columns = data.columns;
-        levelData.amountBreads = data.amountBreads;
-        levelData.amountIngredients = data.amountIngredients;
-        levelData.gridData = data.gridData;
-
-        string fileName = "Level-" + System.DateTime.Now.Ticks.ToString();
-
-        // Save the container asset with the specified name
-#if UNITY_EDITOR
-        string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Resources/Collections/Levels/Saved/"+ fileName+".asset");
-        AssetDatabase.CreateAsset(levelData, path);
-#else
-        string path = AssetDatabase.GenerateUniqueAssetPath(Application.persistentDataPath + "/Collections/Levels/Saved/"+ fileName+".asset");
-        AssetDatabase.CreateAsset(levelCollection, path);
-#endif
     }
 
     public void ExecuteNewCommand(Command command)
@@ -144,15 +124,17 @@ public class GameController : MonoBehaviour
             }
 
             PlayerPrefs.SetInt("Level", level);
-
-            moves = 0;
-            undoCommands.Clear();
-
             textLevel.text = string.Format("Level {0}", level + 1);
-
-            gridController.DeleteGrid();
+            ResetDataGrid();
             gridController.CreateGrid(levelCollection.levels[level]);
         }
+    }
+
+    private void ResetDataGrid()
+    {
+        moves = 0;
+        undoCommands.Clear();
+        gridController.DeleteGrid();
     }
 
     public void CancelLastCommand()
@@ -195,5 +177,41 @@ public class GameController : MonoBehaviour
         moves--;
         Command command = undoCommands.Pop();
         command.Undo();
+    }
+
+    private void OnClickNewGridButton()
+    {
+        ResetDataGrid();
+        LevelData currentData = levelCollection.levels[level];
+        LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
+        levelData.amountBreads = currentData.amountBreads;
+        levelData.amountIngredients = currentData.amountIngredients;
+        levelData.rows = currentData.rows;
+        levelData.columns = currentData.columns;
+
+        gridController.CreateGrid(levelData);
+    }
+
+    private void OnClickSaveGridButton()
+    {
+        LevelData data = gridController.GetLevelData();
+
+        LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
+        levelData.rows = data.rows;
+        levelData.columns = data.columns;
+        levelData.amountBreads = data.amountBreads;
+        levelData.amountIngredients = data.amountIngredients;
+        levelData.gridData = data.gridData;
+
+        string fileName = "Level-" + System.DateTime.Now.Ticks.ToString();
+
+        // Save the container asset with the specified name
+#if UNITY_EDITOR
+        string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Resources/Collections/Levels/Saved/" + fileName + ".asset");
+        AssetDatabase.CreateAsset(levelData, path);
+#else
+        string path = AssetDatabase.GenerateUniqueAssetPath(Application.persistentDataPath + "/Collections/Levels/Saved/"+ fileName+".asset");
+        AssetDatabase.CreateAsset(levelCollection, path);
+#endif
     }
 }

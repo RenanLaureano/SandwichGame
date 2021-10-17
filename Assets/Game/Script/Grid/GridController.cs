@@ -260,13 +260,13 @@ public class GridController : MonoBehaviour
 
     public LevelData GetLevelData()
     {
-        return new LevelData
-        {
-            rows = rows,
-            columns = columns,
-            amountBreads = amountBreads,
-            amountIngredients = amountIngredients,
-            gridData = levelsGrid
-        };
+        LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
+        levelData.amountBreads = amountBreads;
+        levelData.amountIngredients = amountIngredients;
+        levelData.rows = rows;
+        levelData.columns = columns;
+        levelData.gridData = levelsGrid;
+
+        return levelData;
     }
 }
