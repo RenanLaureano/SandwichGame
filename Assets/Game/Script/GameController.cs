@@ -43,6 +43,8 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ServiceLocator.Instance.Register<GameController>(this);
+
         level = PlayerPrefs.GetInt("Level", 0);
 
         gridController = GetComponent<GridController>();
@@ -188,6 +190,19 @@ public class GameController : MonoBehaviour
         levelData.amountIngredients = currentData.amountIngredients;
         levelData.rows = currentData.rows;
         levelData.columns = currentData.columns;
+
+        gridController.CreateGrid(levelData);
+    }
+
+    public void PlayGridByLevelData(LevelData data)
+    {
+        ResetDataGrid();
+        LevelData levelData = ScriptableObject.CreateInstance<LevelData>();
+        levelData.amountBreads = data.amountBreads;
+        levelData.amountIngredients = data.amountIngredients;
+        levelData.rows = data.rows;
+        levelData.columns = data.columns;
+        levelData.gridData = data.gridData;
 
         gridController.CreateGrid(levelData);
     }
