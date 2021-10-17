@@ -38,19 +38,38 @@ public class GridController : MonoBehaviour
 
         if(gridData !=null && gridData.Count > 0)
         {
-            foreach(TileInfo tile in gridData)
-            {
-                grid.Add(new TileInfo
-                    { 
-                    row = tile.row,
-                    column = tile.column,
-                    tileType = tile.tileType
-                });
-            }
 
+            for (int i = 0; i < columns; i++)
+            {
+                for (int j = 0; j < rows; j++)
+                {
+                    grid.Add(CreateTileInfo(gridData,j,i));
+                }
+            }
         }
         
         return grid;
+    }
+
+    private TileInfo CreateTileInfo(List<TileInfo> gridData, int row, int column)
+    {
+        foreach (TileInfo tile in gridData)
+        {
+            if(tile.row == row && tile.column == column)
+            return new TileInfo
+            {
+                row = tile.row,
+                column = tile.column,
+                tileType = tile.tileType
+            };
+        }
+
+        return new TileInfo
+        {
+            row = row,
+            column = column,
+            tileType = TileInfo.TileType.EMPTY
+        };
     }
 
     private void LoadObjectTiles()

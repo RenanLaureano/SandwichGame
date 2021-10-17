@@ -12,57 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85f8a2d5a6f517148b283848491e6fe0, type: 3}
   m_Name: LevelCollection1
   m_EditorClassIdentifier: 
-  rows: 4
-  columns: 4
-  levels: 3
-  amountBreads: 2
-  amountIngredients: 3
-  gridData:
-  - row: 0
-    column: 0
-    tileType: 1
-  - row: 0
-    column: 1
-    tileType: 9
-  - row: 0
-    column: 2
-    tileType: 7
-  - row: 0
-    column: 3
-    tileType: 0
-  - row: 1
-    column: 0
-    tileType: 1
-  - row: 1
-    column: 1
-    tileType: 3
-  - row: 1
-    column: 2
-    tileType: 0
-  - row: 1
-    column: 3
-    tileType: 0
-  - row: 2
-    column: 0
-    tileType: 0
-  - row: 2
-    column: 1
-    tileType: 0
-  - row: 2
-    column: 2
-    tileType: 0
-  - row: 2
-    column: 3
-    tileType: 0
-  - row: 3
-    column: 0
-    tileType: 0
-  - row: 3
-    column: 1
-    tileType: 0
-  - row: 3
-    column: 2
-    tileType: 0
-  - row: 3
-    column: 3
-    tileType: 0
+  levels:
+  - rows: 4
+    columns: 4
+    amountBreads: 2
+    amountIngredients: 3
+    gridData:
+    - row: 0
+      column: 0
+      tileType: 1
+    - row: 0
+      column: 1
+      tileType: 9
+    - row: 0
+      column: 2
+      tileType: 7
+    - row: 1
+      column: 0
+      tileType: 1
+    - row: 1
+      column: 1
+      tileType: 3

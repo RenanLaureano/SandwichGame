@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour
     private int moves = 0;
     private GameState gameState;
 
-    private LevelCollection[] levelCollections;
+    private LevelCollection levelCollection;
     private GridController gridController;
     private Stack<Command> undoCommands = new Stack<Command>();
 
@@ -39,17 +39,17 @@ public class GameController : MonoBehaviour
     {
         gridController = GetComponent<GridController>();
 
-        levelCollections = Resources.LoadAll<LevelCollection>("Collections/");
+        levelCollection = Resources.LoadAll<LevelCollection>("Collections")[0];
 
         resetButton.onClick.AddListener(OnClickResetButton);
         undoButton.onClick.AddListener(OnClickUndoButton);
 
-        if (levelCollections.Length <= 0 || levelCollections[level].gridData.Count <= 0)
+        if (levelCollection == null)
         {
             return;
         }
 
-        LevelCollection _level = levelCollections[level];
+        LevelData _level = levelCollection.levels[level];
         gridController.CreateGrid(_level.rows, _level.columns, _level.gridData);
 
         gameStateVariable.SetValue((int)GameState.PLAYING);
@@ -71,7 +71,7 @@ public class GameController : MonoBehaviour
     {
         TileNodeObject tileNode = movedObject.GetComponent<TileNodeObject>();
 
-        if (moves == (levelCollections[0].amountBreads + levelCollections[0].amountIngredients) - 1)
+        if (moves == (levelCollection.levels[level].amountBreads + levelCollection.levels[level].amountIngredients) - 1)
         {
             GaveOver(tileNode);
         }
