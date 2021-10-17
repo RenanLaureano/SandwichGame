@@ -10,11 +10,6 @@ public class ServiceLocator : Singleton<ServiceLocator>
     {
         mObjects = new Dictionary<Type, object>();
     }
-
-    void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
     public bool IsRegistered<T>()
     {
         return mObjects.ContainsKey(typeof(T));
