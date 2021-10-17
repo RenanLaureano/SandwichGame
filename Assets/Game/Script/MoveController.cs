@@ -16,6 +16,7 @@ public class MoveController : MonoBehaviour
     private const float TILE_HEIGHT = 0.1f;
 
     private GridController gridController = null;
+    private GameController gameController = null;
     private bool inMoving = false;
 
     private int animMoveID;
@@ -23,7 +24,8 @@ public class MoveController : MonoBehaviour
 
     void Start()
     {
-        ServiceLocator.Instance.Register<MoveController>(this);
+        gridController = GetComponent<GridController>();
+        gameController = GetComponent<GameController>();
     }
 
     public void MoveToDirection(TileNodeObject selectedObject, MoveDirection direction)
@@ -31,11 +33,6 @@ public class MoveController : MonoBehaviour
         if (inMoving)
         {
             return;
-        }
-
-        if(gridController == null)
-        {
-            gridController = ServiceLocator.Instance.GetComponentRegistered<GridController>();
         }
 
         selectedObject = selectedObject.GetParentAll();
@@ -75,6 +72,7 @@ public class MoveController : MonoBehaviour
                 selectedObject.transform.SetParent(target.transform);
                 selectedObject.UpdatePositionTileInfo(target.TileInfo.row, target.TileInfo.column);
                 inMoving = false;
+                gameController.Moved(selectedObject.GetParentAll());
             }).uniqueId;
 
 

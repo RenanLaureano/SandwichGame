@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
-    //Temporary after remove
-    public LevelCollection testCollection;
-    private GridData levelsGrid;
-
     private const float START_POS_X = -2.0f;
     private const float START_POS_Y = 0f;
     private const float START_POS_Z = -8f;
@@ -17,6 +13,7 @@ public class GridController : MonoBehaviour
 
     private int rows;
     private int columns;
+    private List<TileInfo> levelsGrid;
     private TileNodeObject[,] grid;
 
     //Tiles
@@ -33,19 +30,37 @@ public class GridController : MonoBehaviour
 
     void Start()
     {
-        ServiceLocator.Instance.Register<GridController>(this);
-
         LoadObjectTiles();
-        InitGridInfo();
         GenerateGrid();
     }
 
-    private void InitGridInfo()
+    public void CreateGrid(int rows, int columns, List<TileInfo> gridData)
     {
-        this.rows = testCollection.rows;
-        this.columns = testCollection.columns;
-        levelsGrid = new GridData(testCollection.levelsGrid[0]);
+        this.rows = rows;
+        this.columns = columns;
+        levelsGrid = GenerateGridDate(gridData);
     }
+
+    private List<TileInfo> GenerateGridDate(List<TileInfo> gridData)
+    {
+        List<TileInfo> grid = new List<TileInfo>();
+
+        if(gridData !=null && gridData.Count > 0)
+        {
+            foreach(TileInfo tile in gridData)
+            {
+                grid.Add(new TileInfo
+                    { 
+                    row = tile.row,
+                    column = tile.column,
+                    tileType = tile.tileType
+                });
+            }
+        }
+
+        return grid;
+    }
+
     private void LoadObjectTiles()
     {
         bread = Resources.Load<GameObject>("Tiles/Bread");
@@ -95,7 +110,7 @@ public class GridController : MonoBehaviour
 
     private TileInfo GetTileInfo(int row, int column)
     {
-        foreach (var tile in levelsGrid.tiles)
+        foreach (TileInfo tile in levelsGrid)
         {
             if (tile.row == row && tile.column == column)
             {

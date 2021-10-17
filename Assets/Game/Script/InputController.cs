@@ -13,7 +13,7 @@ public class InputController : MonoBehaviour
 
     void Start()
     {
-        ServiceLocator.Instance.Register<InputController>(this);
+        moveController = GetComponent<MoveController>();
     }
 
     private void OnEnable()
@@ -46,11 +46,6 @@ public class InputController : MonoBehaviour
         if(selectedObject == null)
         {
             return;
-        }
-
-        if(moveController == null)
-        {
-            moveController = ServiceLocator.Instance.GetComponentRegistered<MoveController>();
         }
 
         Vector2 fingerSwipe = finger.ScreenPosition - finger.StartScreenPosition;

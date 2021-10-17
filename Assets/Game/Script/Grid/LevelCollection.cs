@@ -11,5 +11,5 @@ public class LevelCollection : ScriptableObject
     public int levels;
     public int amountBreads;
     public int amountIngredients;
-    public List<GridData> levelsGrid;
+    public List<TileInfo> gridData;
 }
